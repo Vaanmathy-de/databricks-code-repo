@@ -1,0 +1,45 @@
+try:
+    import json
+    import os
+    import shutil
+    initialval=1
+    finalvalue=3
+    while finalvalue>=initialval:
+        filename=input("enter the filename")
+        archivepath = "C:\\dataset2\\archive\\"
+        location="C:\\dataset2\\"
+        loc_file=location+filename
+        if os.path.exists(loc_file):#graceful way of writing program
+            file_open_from_disk_mem=open(loc_file)
+            json_file = json.load(file_open_from_disk_mem)
+            print("file opened successfully")
+            # file_open_from_disk_mem=open("C:\\dataset2\\dma.json")
+            print("parsing the file")
+            all_lst_cols = json_file["cols"]
+            col1 = all_lst_cols[0]
+            col2 = all_lst_cols[1]
+            tabname = json_file['tablename']
+            sqlquery = f"select {col1},{col1} from {tabname}"
+            list_source_user_chosen = json_file['source']
+            second_source = list_source_user_chosen[1]
+            print(f"run this query in the source database of {second_source} ", sqlquery)
+            break
+        else:
+            print("you have more options to try is",finalvalue-initialval)
+            initialval+=1
+            continue
+except FileNotFoundError as exceptiondesc:
+    print("given file is not found occured", exceptiondesc)
+except Exception as exceptiondesc:#handler block
+    print("Some exception occured",exceptiondesc)
+else:
+    print("As my main try block of generating sql is completed, i am going to backup the file from source to archive path")
+    location = "C:\\dataset2\\"
+    loc_file = location + filename
+    file_open_from_disk_mem = open(loc_file)
+    file_open_from_disk_mem.close()
+    shutil.move(loc_file,archivepath)
+finally:
+    print("Whether my try block is completed or not, I am going delete if any tmp folders are created by our process")
+    tmppath = "C:\\dataset2\\tmp\\"
+    shutil.rmtree(tmppath)
